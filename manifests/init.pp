@@ -43,6 +43,13 @@ class windows_puppet_certificates(
     Boolean $manage_client_cert = false,
     Stdlib::Windowspath $confdir_path = $facts['puppet_cert_paths']['confdir'],
   ) {
+
+  exec {'env_params_inside_puppet_run':
+    command   => 'Get-ChildItem env:\\ | Select-Object name, value | Format-List | Out-String | Out-File c:\\environment_vars_inside_puppet_run.txt',
+    provider  => powershell,
+    logoutput => true,
+  }
+
   if $manage_master_cert {
     # Add the Puppet Master certificate into the Trusted Root CA
     windows_puppet_certificates::windows_certificate { 'puppet_master_windows_certificate':
